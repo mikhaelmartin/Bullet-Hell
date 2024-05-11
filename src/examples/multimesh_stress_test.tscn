@@ -1,0 +1,107 @@
+[gd_scene load_steps=10 format=3 uid="uid://dof5gaufctriy"]
+
+[ext_resource type="PackedScene" uid="uid://7yjph8e2q7js" path="res://src/player/player.tscn" id="1_cvtq6"]
+[ext_resource type="PackedScene" uid="uid://ds7tifl1pim25" path="res://src/multi_bullet/multi_laser.tscn" id="2_mqn35"]
+[ext_resource type="Texture2D" uid="uid://dwn8tbixy15cl" path="res://icon.svg" id="5_7sci0"]
+[ext_resource type="Script" path="res://src/debug_labels/fps_label.gd" id="6_anc6v"]
+[ext_resource type="Script" path="res://src/debug_labels/bullet_count_label.gd" id="7_0vw4h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e67g7"]
+size = Vector2(544, 544)
+
+[sub_resource type="Animation" id="Animation_g7r3s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(146, 123)]
+}
+
+[sub_resource type="Animation" id="Animation_8ib72"]
+resource_name = "left_right"
+length = 3.0
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(146, 123), Vector2(32.275, 123)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0yjo6"]
+_data = {
+"RESET": SubResource("Animation_g7r3s"),
+"left_right": SubResource("Animation_8ib72")
+}
+
+[node name="MultimeshStressTest" type="Node2D"]
+
+[node name="Player" parent="." node_paths=PackedStringArray("target") instance=ExtResource("1_cvtq6")]
+position = Vector2(90, 225)
+target = NodePath("../Enemy")
+auto_shoot = true
+
+[node name="Shooter" parent="Player" index="1"]
+bullet_scene = ExtResource("2_mqn35")
+override_bullet_pattern_enabled = true
+spread_count = 4
+spread_angle = 4.71239
+sub_spread_count = 60
+sub_spread_angle = 1.0472
+override_bullet_data_enabled = true
+life_time = 5.0
+linear_initial_speed = 300.0
+linear_final_speed = 100.0
+linear_acceleration = 1000.0
+angular_initial_speed = -2.0
+angular_final_speed = 2.0
+angular_acceleration = 2.0
+angular_pingpong = true
+
+[node name="Enemy" type="Area2D" parent="."]
+position = Vector2(146, 123)
+scale = Vector2(0.0625, 0.0625)
+collision_layer = 4
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy"]
+scale = Vector2(4.625, 4.625)
+texture = ExtResource("5_7sci0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy"]
+shape = SubResource("RectangleShape2D_e67g7")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Enemy"]
+active = false
+libraries = {
+"": SubResource("AnimationLibrary_0yjo6")
+}
+autoplay = "left_right"
+
+[node name="Fps" type="Label" parent="."]
+z_index = 100
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_anc6v")
+
+[node name="Bullets" type="Label" parent="."]
+z_index = 100
+offset_top = 17.0
+offset_right = 40.0
+offset_bottom = 57.0
+script = ExtResource("7_0vw4h")
+
+[editable path="Player"]

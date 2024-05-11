@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://cvk37jih8fl4c"]
+
+[ext_resource type="Script" path="res://src/bullet/bullet.gd" id="1_s8wvp"]
+[ext_resource type="Texture2D" uid="uid://dleuspnssf0io" path="res://asset/spritesheets/laser-bolts.png" id="2_70n11"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trshb"]
+atlas = ExtResource("2_70n11")
+region = Rect2(1, 6, 13, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nbnj0"]
+atlas = ExtResource("2_70n11")
+region = Rect2(1, 20, 13, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m7qwu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trshb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nbnj0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wbvsd"]
+radius = 2.0
+
+[node name="Laser" type="Area2D" groups=["bullet"]]
+z_index = 1
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_s8wvp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_m7qwu")
+autoplay = "default"
+frame_progress = 0.362218
+offset = Vector2(-4, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_wbvsd")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

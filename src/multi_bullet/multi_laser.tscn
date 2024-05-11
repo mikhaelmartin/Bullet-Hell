@@ -1,0 +1,70 @@
+[gd_scene load_steps=10 format=3 uid="uid://ds7tifl1pim25"]
+
+[ext_resource type="Script" path="res://src/multi_bullet/multi_bullet.gd" id="1_5s33q"]
+[ext_resource type="Texture2D" uid="uid://dleuspnssf0io" path="res://asset/spritesheets/laser-bolts.png" id="2_41lke"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_p0l5s"]
+size = Vector2(20, 7)
+
+[sub_resource type="MultiMesh" id="MultiMesh_ntdqo"]
+resource_local_to_scene = true
+mesh = SubResource("QuadMesh_p0l5s")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_1edpw"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_df6u0"]
+radius = 2.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trshb"]
+atlas = ExtResource("2_41lke")
+region = Rect2(1, 6, 13, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nbnj0"]
+atlas = ExtResource("2_41lke")
+region = Rect2(1, 20, 13, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gjf20"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trshb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nbnj0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="MultiLaser" type="MultiMeshInstance2D" groups=["multi_bullet"]]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+z_index = 1
+multimesh = SubResource("MultiMesh_ntdqo")
+texture = SubResource("ViewportTexture_1edpw")
+script = ExtResource("1_5s33q")
+bullet_shape = SubResource("CircleShape2D_df6u0")
+num_threads = 4
+collide_with_bodies = false
+collision_mask = 4
+
+[node name="SubViewport" type="SubViewport" parent="."]
+process_thread_group = 1
+process_thread_group_order = 0
+process_thread_messages = 3
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(20, 7)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SubViewport"]
+position = Vector2(10, 3)
+sprite_frames = SubResource("SpriteFrames_gjf20")
+autoplay = "default"
+frame_progress = 0.312086
+offset = Vector2(-4, 0)

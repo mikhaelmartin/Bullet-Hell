@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://7yjph8e2q7js"]
+
+[ext_resource type="Script" path="res://src/player/player.gd" id="1_51hl5"]
+[ext_resource type="Texture2D" uid="uid://dvbkg6s34eonx" path="res://asset/spritesheets/ship.png" id="1_vtmao"]
+[ext_resource type="PackedScene" uid="uid://8qkpbpridakg" path="res://src/shooter/shooter.tscn" id="2_26qum"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwxib"]
+atlas = ExtResource("1_vtmao")
+region = Rect2(0, 32, 24, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1wtxv"]
+atlas = ExtResource("1_vtmao")
+region = Rect2(24, 32, 24, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x7eii"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwxib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1wtxv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qetlt"]
+radius = 6.0
+
+[node name="Player" type="Area2D"]
+z_index = 2
+position = Vector2(90, 250)
+rotation = -1.5708
+collision_mask = 0
+script = ExtResource("1_51hl5")
+
+[node name="ShootCooldownTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.05
+one_shot = true
+
+[node name="Shooter" parent="." instance=ExtResource("2_26qum")]
+position = Vector2(10, 3.8147e-05)
+rotation = 0.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_x7eii")
+autoplay = "default"
+frame_progress = 0.404065
+offset = Vector2(-4, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_qetlt")

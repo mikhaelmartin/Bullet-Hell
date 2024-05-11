@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://8qkpbpridakg"]
+
+[ext_resource type="Script" path="res://src/shooter/shooter.gd" id="1_mbp06"]
+
+[node name="Shooter" type="Marker2D"]
+position = Vector2(88, 188)
+rotation = -1.5708
+script = ExtResource("1_mbp06")

@@ -1,0 +1,139 @@
+[gd_scene load_steps=14 format=3 uid="uid://c0fqnkj0r08ka"]
+
+[ext_resource type="PackedScene" uid="uid://7yjph8e2q7js" path="res://src/player/player.tscn" id="1_7exti"]
+[ext_resource type="PackedScene" uid="uid://ds7tifl1pim25" path="res://src/multi_bullet/multi_laser.tscn" id="2_5yaap"]
+[ext_resource type="Script" path="res://src/bullet_pattern/bullet_pattern.gd" id="3_ho8qh"]
+[ext_resource type="Script" path="res://src/bullet_data/bullet_data.gd" id="4_eamo5"]
+[ext_resource type="Texture2D" uid="uid://dwn8tbixy15cl" path="res://icon.svg" id="5_1m22x"]
+[ext_resource type="Script" path="res://src/debug_labels/fps_label.gd" id="6_wi22n"]
+[ext_resource type="Script" path="res://src/debug_labels/bullet_count_label.gd" id="7_mlukj"]
+
+[sub_resource type="Resource" id="Resource_icqkp"]
+resource_local_to_scene = true
+script = ExtResource("3_ho8qh")
+rotation_initial_speed = -0.2
+rotation_final_speed = 0.0
+rotation_acceleration = 0.0
+rotation_speed_pingpong = false
+spread_count = 5
+spread_angle = 5.02655
+sub_spread_count = 3
+sub_spread_angle = 0.261799
+
+[sub_resource type="Resource" id="Resource_bbpiw"]
+resource_local_to_scene = true
+script = ExtResource("4_eamo5")
+life_time = 6.0
+aim_target = false
+lock_target = false
+linear_initial_speed = 300.0
+linear_final_speed = 60.0
+linear_acceleration = 1000.0
+linear_pingpong = false
+angular_initial_speed = -4.4
+angular_final_speed = 5.0
+angular_acceleration = 2.0
+angular_pingpong = false
+spin_initial_speed = 0.0
+spin_final_speed = 0.0
+spin_acceleration = 0.0
+spin_pingpong = false
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e67g7"]
+size = Vector2(544, 544)
+
+[sub_resource type="Animation" id="Animation_g7r3s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(146, 123)]
+}
+
+[sub_resource type="Animation" id="Animation_8ib72"]
+resource_name = "left_right"
+length = 3.0
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(146, 123), Vector2(32.275, 123)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0yjo6"]
+_data = {
+"RESET": SubResource("Animation_g7r3s"),
+"left_right": SubResource("Animation_8ib72")
+}
+
+[node name="AutoPattern1" type="Node2D"]
+
+[node name="Player" parent="." node_paths=PackedStringArray("target") instance=ExtResource("1_7exti")]
+position = Vector2(90, 225)
+target = NodePath("../Enemy")
+auto_shoot = true
+
+[node name="Shooter" parent="Player" index="1"]
+bullet_scene = ExtResource("2_5yaap")
+bullet_pattern = SubResource("Resource_icqkp")
+bullet_data = SubResource("Resource_bbpiw")
+rotation_initial_speed = -0.2
+rotation_acceleration = 0.1
+spread_count = 5
+spread_angle = 5.23599
+sub_spread_count = 3
+sub_spread_angle = 0.261799
+override_bullet_data_enabled = true
+life_time = 6.0
+linear_initial_speed = 300.0
+linear_final_speed = 60.0
+linear_acceleration = 1000.0
+angular_initial_speed = -4.4
+angular_final_speed = 5.0
+angular_acceleration = 2.0
+
+[node name="Enemy" type="Area2D" parent="."]
+position = Vector2(146, 123)
+scale = Vector2(0.0625, 0.0625)
+collision_layer = 4
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy"]
+scale = Vector2(4.625, 4.625)
+texture = ExtResource("5_1m22x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy"]
+shape = SubResource("RectangleShape2D_e67g7")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Enemy"]
+libraries = {
+"": SubResource("AnimationLibrary_0yjo6")
+}
+autoplay = "left_right"
+
+[node name="Fps" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_wi22n")
+
+[node name="Bullets" type="Label" parent="."]
+offset_top = 17.0
+offset_right = 40.0
+offset_bottom = 57.0
+script = ExtResource("7_mlukj")
+
+[editable path="Player"]
