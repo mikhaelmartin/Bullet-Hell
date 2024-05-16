@@ -22,7 +22,7 @@ func _ready():
 	next_position = self.global_position
 
 
-func _process(delta):
+func _process(_delta):
 	if not use_interpolation:
 		return
 	
@@ -32,7 +32,7 @@ func _process(delta):
 	self.global_position = lerp(
 		previous_position,
 		next_position,
-		Engine.get_physics_interpolation_fraction()
+		Engine.get_physics_interpolation_fraction(),
 	)
 	
 	

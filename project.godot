@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Bullet Hell"
+config/version="1.0.1"
 run/main_scene="res://src/examples/multimesh_stress_test.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 run/delta_smoothing=false

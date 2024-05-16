@@ -6,8 +6,9 @@
 [sub_resource type="QuadMesh" id="QuadMesh_p0l5s"]
 size = Vector2(20, 7)
 
-[sub_resource type="MultiMesh" id="MultiMesh_ntdqo"]
+[sub_resource type="MultiMesh" id="MultiMesh_iblit"]
 resource_local_to_scene = true
+visible_instance_count = 0
 mesh = SubResource("QuadMesh_p0l5s")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_1edpw"]
@@ -39,11 +40,8 @@ animations = [{
 }]
 
 [node name="MultiLaser" type="MultiMeshInstance2D" groups=["multi_bullet"]]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
 z_index = 1
-multimesh = SubResource("MultiMesh_ntdqo")
+multimesh = SubResource("MultiMesh_iblit")
 texture = SubResource("ViewportTexture_1edpw")
 script = ExtResource("1_5s33q")
 bullet_shape = SubResource("CircleShape2D_df6u0")

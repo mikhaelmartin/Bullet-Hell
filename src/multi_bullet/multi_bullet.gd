@@ -52,10 +52,10 @@ var next_spin:PackedFloat32Array = []
 
 
 func _ready():
+	multimesh.visible_instance_count = 0
 	update_space_state()
 
-
-func _process(delta):
+func _process(_delta):
 	# update transform
 	if BulletManager.use_interpolation and Engine.get_frames_per_second() > Engine.physics_ticks_per_second:
 		var weight = Engine.get_physics_interpolation_fraction()
@@ -78,14 +78,22 @@ func _process(delta):
 				next_spin[i],
 				weight
 			)
-	
-	for i in multimesh.visible_instance_count:
-		multimesh.set_instance_transform_2d(
+			
+			multimesh.set_instance_transform_2d(
 			i,
 			Transform2D(
 				current_rotation[i] + current_spin[i],
 				current_position[i])
-		)
+			)
+	else:
+		# if fps is too small use physics process
+		for i in multimesh.visible_instance_count:
+			multimesh.set_instance_transform_2d(
+				i,
+				Transform2D(
+					current_rotation[i] + current_spin[i],
+					current_position[i])
+			)
 
 
 func _physics_process(delta):
@@ -103,6 +111,7 @@ func _physics_process(delta):
 	query.collision_mask = collision_mask
 	query.collide_with_areas = collide_with_areas
 	query.collide_with_bodies = collide_with_bodies
+	
 	for i in multimesh.visible_instance_count:
 		query.transform = Transform2D(0, current_position[i])
 
@@ -110,15 +119,9 @@ func _physics_process(delta):
 		
 		if result:
 			life_time[i] = 0
-
-	# remove yang udah habis lifetime
-	for i in range(multimesh.visible_instance_count-1,-1,-1):
-		life_time[i] -= delta
-		if life_time[i] <= 0:
-			remove_bullet(i)
+			continue
 	
-	# update bullet
-	for i in multimesh.visible_instance_count:
+		# update bullet
 		# update linear
 		if linear_acceleration[i] != 0 and linear_current_speed[i] != linear_final_speed[i]: 
 			linear_current_speed[i] = move_toward(linear_current_speed[i], linear_final_speed[i], linear_acceleration[i] * delta)
@@ -179,6 +182,12 @@ func _physics_process(delta):
 			current_position[i] = next_position[i]
 			current_rotation[i] = next_rotation[i]
 			current_spin[i] = next_spin[i]
+			
+	# remove yang udah habis lifetime
+	for i in multimesh.visible_instance_count:
+		life_time[i] -= delta
+		if life_time[i] <= 0:
+			remove_bullet(i)
 
 
 func update_space_state():
@@ -189,15 +198,11 @@ func add_bullet(p_position:Vector2,p_rotation:float,p_data:BulletData,p_target:N
 	if multimesh.visible_instance_count < 0:
 		multimesh.visible_instance_count = 0
 		
-	if multimesh.instance_count < multimesh.visible_instance_count + 1:
-		multimesh.instance_count = multimesh.visible_instance_count + 1
+	if multimesh.instance_count <= multimesh.visible_instance_count:
+		grow_buffer(100)
 	
+	set_at(multimesh.visible_instance_count, p_position, p_rotation, p_data, p_target)
 	multimesh.visible_instance_count += 1
-	if life_time.size() < multimesh.visible_instance_count:
-		append(p_position, p_rotation, p_data, p_target)
-	else:
-		var idx = multimesh.visible_instance_count - 1
-		set_at(idx, p_position, p_rotation, p_data, p_target)
 
 
 func remove_bullet(idx:int):
@@ -206,6 +211,52 @@ func remove_bullet(idx:int):
 		
 	multimesh.visible_instance_count -= 1
 	swap_index_a_with_b(idx, multimesh.visible_instance_count)
+
+
+func grow_buffer(amount:int):
+	multimesh.instance_count += amount
+	
+	life_time.resize(multimesh.instance_count)
+	
+	aim_target.resize(multimesh.instance_count)
+	lock_target.resize(multimesh.instance_count)
+	
+	linear_initial_speed.resize(multimesh.instance_count)
+	linear_final_speed.resize(multimesh.instance_count)
+	linear_acceleration.resize(multimesh.instance_count)
+	linear_pingpong.resize(multimesh.instance_count)
+	
+	angular_initial_speed.resize(multimesh.instance_count)
+	angular_final_speed.resize(multimesh.instance_count)
+	angular_acceleration.resize(multimesh.instance_count)
+	angular_pingpong.resize(multimesh.instance_count)
+	
+	spin_initial_speed.resize(multimesh.instance_count)
+	spin_final_speed.resize(multimesh.instance_count)
+	spin_acceleration.resize(multimesh.instance_count)
+	spin_pingpong.resize(multimesh.instance_count)
+	
+	target.resize(multimesh.instance_count)
+	
+	linear_current_speed.resize(multimesh.instance_count)
+	angular_current_speed.resize(multimesh.instance_count)
+	spin_current_speed.resize(multimesh.instance_count)
+	
+	target_position.resize(multimesh.instance_count)
+	
+	velocity.resize(multimesh.instance_count)
+	
+	current_position.resize(multimesh.instance_count)
+	previous_position.resize(multimesh.instance_count)
+	next_position.resize(multimesh.instance_count)
+	
+	current_rotation.resize(multimesh.instance_count)
+	previous_rotation.resize(multimesh.instance_count)
+	next_rotation.resize(multimesh.instance_count)
+
+	current_spin.resize(multimesh.instance_count)
+	previous_spin.resize(multimesh.instance_count)
+	next_spin.resize(multimesh.instance_count)
 
 
 func append(p_position:Vector2, p_rotation:float, p_data, p_target:Node2D):
